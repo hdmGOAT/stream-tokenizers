@@ -2,11 +2,13 @@ mod bounded_buffer;
 mod normalizer_state;
 mod orchestrator;
 mod pre_tokenizer_state;
+mod word_level_streamer;
 
 pub use bounded_buffer::BoundedBuffer;
 pub use normalizer_state::NormalizerState;
 pub use orchestrator::StreamTokenizer;
 pub use pre_tokenizer_state::PreTokenizerState;
+pub use word_level_streamer::WordLevelStreamer;
 
 use crate::{Split, Token};
 use crate::tokenizer::Result;
