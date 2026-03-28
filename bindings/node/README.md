@@ -17,6 +17,10 @@ NodeJS implementation of today's most used tokenizers, with a focus on performan
 versatility. Bindings over the [Rust](https://github.com/huggingface/tokenizers/tree/master/tokenizers) implementation.
 If you are interested in the High-level design, you can go check it there.
 
+> Fork context: this repository is a streaming-focused fork of
+> `huggingface/tokenizers`. The Node binding here includes streaming tokenizer
+> APIs added in this fork.
+
 ## Main features
 
  - Train new vocabularies and tokenize using 4 pre-made tokenizers (Bert WordPiece and the 3

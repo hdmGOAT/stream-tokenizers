@@ -1,3 +1,9 @@
+## Fork context
+
+This documentation is for a streaming-focused fork of
+`huggingface/tokenizers`. It includes notes and references for streaming
+tokenization work being developed in this fork.
+
 ## Requirements
 
 In order to generate the documentation, it is necessary to have a Python environment with the

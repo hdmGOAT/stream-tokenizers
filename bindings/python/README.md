@@ -15,6 +15,10 @@
 
 # Tokenizers
 
+> Fork context: this repo is a streaming-focused fork of
+> `huggingface/tokenizers`. The Python binding in this fork includes streaming
+> tokenization work under active development.
+
 Provides an implementation of today's most used tokenizers, with a focus on performance and
 versatility.
 

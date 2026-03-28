@@ -16,6 +16,14 @@
 Provides an implementation of today's most used tokenizers, with a focus on performance and
 versatility.
 
+## Fork notice
+
+This repository is a fork of `huggingface/tokenizers` used to develop and validate
+streaming tokenization features (especially Python and Node bindings).
+
+- Upstream project: https://github.com/huggingface/tokenizers
+- This fork: streaming-focused work and experiments before upstreaming
+
 ## Main features:
 
  - Train new vocabularies and tokenize, using today's most used tokenizers.
