@@ -1,25 +1,10 @@
-<p align="center">
-  <br>
-  <img src="https://huggingface.co/landing/assets/tokenizers/tokenizers-logo.png" width="600"/>
-  <br>
-<p>
-<p align="center">
-  <a href="https://badge.fury.io/js/tokenizers">
-    <img alt="Build" src="https://badge.fury.io/js/tokenizers.svg">
-  </a>
-  <a href="https://github.com/huggingface/tokenizers/blob/master/LICENSE">
-    <img alt="GitHub" src="https://img.shields.io/github/license/huggingface/tokenizers.svg?color=blue">
-  </a>
-</p>
-<br>
+# Tokenizers — Node.js Binding
 
-NodeJS implementation of today's most used tokenizers, with a focus on performance and
-versatility. Bindings over the [Rust](https://github.com/huggingface/tokenizers/tree/master/tokenizers) implementation.
-If you are interested in the High-level design, you can go check it there.
+**Fork of Hugging Face `tokenizers` with streaming support for Node.js.**
 
-> Fork context: this repository is a streaming-focused fork of
-> `huggingface/tokenizers`. The Node binding here includes streaming tokenizer
-> APIs added in this fork.
+> This repository is an independently maintained fork of Hugging Face `tokenizers`,
+> focused on streaming tokenization support. The Node.js binding includes streaming APIs
+> under active development.
 
 ## Main features
 
@@ -33,29 +18,29 @@ If you are interested in the High-level design, you can go check it there.
    original sentence that corresponds to a given token.
  - Does all the pre-processing: Truncate, Pad, add the special tokens your model needs.
 
-## Installation
+## Installation (from source)
 
 ```bash
-npm install tokenizers@latest
+cd bindings/node
+npm install
+npm run build:debug
 ```
 
-## Basic example
+## Streaming Example
 
 ```ts
-import { Tokenizer } from "tokenizers";
+import { StreamingTokenizer } from "tokenizers";
 
-const tokenizer = await Tokenizer.fromFile("tokenizer.json");
-const wpEncoded = await tokenizer.encode("Who is John?");
+const tokenizer = new StreamingTokenizer(model);
 
-console.log(wpEncoded.getLength());
-console.log(wpEncoded.getTokens());
-console.log(wpEncoded.getIds());
-console.log(wpEncoded.getAttentionMask());
-console.log(wpEncoded.getOffsets());
-console.log(wpEncoded.getOverflowing());
-console.log(wpEncoded.getSpecialTokensMask());
-console.log(wpEncoded.getTypeIds());
-console.log(wpEncoded.getWordIds());
+// Feed chunks incrementally
+tokenizer.processChunk(Buffer.from("chunk1"));
+tokenizer.processChunk(Buffer.from("chunk2"));
+
+// Finalize and drain tokens
+tokenizer.finalize();
+const tokens = tokenizer.drainTokens();
+console.log(tokens);
 ```
 
 ## License

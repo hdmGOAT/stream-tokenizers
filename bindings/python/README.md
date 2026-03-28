@@ -1,23 +1,10 @@
-<p align="center">
-    <br>
-    <img src="https://huggingface.co/landing/assets/tokenizers/tokenizers-logo.png" width="600"/>
-    <br>
-<p>
-<p align="center">
-    <a href="https://badge.fury.io/py/tokenizers">
-         <img alt="Build" src="https://badge.fury.io/py/tokenizers.svg">
-    </a>
-    <a href="https://github.com/huggingface/tokenizers/blob/master/LICENSE">
-        <img alt="GitHub" src="https://img.shields.io/github/license/huggingface/tokenizers.svg?color=blue">
-    </a>
-</p>
-<br>
+# Tokenizers — Python Binding
 
-# Tokenizers
+**Fork of Hugging Face `tokenizers` with streaming support for Python.**
 
-> Fork context: this repo is a streaming-focused fork of
-> `huggingface/tokenizers`. The Python binding in this fork includes streaming
-> tokenization work under active development.
+> This repository is an independently maintained fork of Hugging Face `tokenizers`,
+> focused on streaming tokenization support. The Python binding includes streaming APIs
+> under active development.
 
 Provides an implementation of today's most used tokenizers, with a focus on performance and
 versatility.
@@ -39,93 +26,49 @@ Otherwise, let's dive in!
    original sentence that corresponds to a given token.
  - Does all the pre-processing: Truncate, Pad, add the special tokens your model needs.
 
-### Installation
+### Installation (from source)
 
-#### With pip:
-
-```bash
-pip install tokenizers
-```
-
-#### From sources:
-
-To use this method, you need to have the Rust installed:
+To build from source, you need Rust installed:
 
 ```bash
-# Install with:
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 export PATH="$HOME/.cargo/bin:$PATH"
 ```
 
-Once Rust is installed, you can compile doing the following
+Then build and install the Python binding:
 
 ```bash
-git clone https://github.com/huggingface/tokenizers
-cd tokenizers/bindings/python
-
-# Create a virtual env (you can use yours as well)
+cd bindings/python
 python -m venv .env
 source .env/bin/activate
-
-# Install `tokenizers` in the current virtual env
 pip install -e .
 ```
 
-### Load a pretrained tokenizer from the Hub
+### Streaming Example
+
+```python
+from tokenizers import StreamingTokenizer
+
+# Create a streaming tokenizer
+tokenizer = StreamingTokenizer(model="path/to/model.json", buffer_size=4096)
+
+# Feed chunks incrementally
+tokenizer.process_chunk(b"chunk1")
+tokenizer.process_chunk(b"chunk2")
+
+# Finalize and drain tokens
+tokenizer.finalize()
+tokens = tokenizer.drain_tokens()
+print(tokens)
+```
+
+### Load a pretrained tokenizer
 
 ```python
 from tokenizers import Tokenizer
 
 tokenizer = Tokenizer.from_pretrained("bert-base-cased")
 ```
-
-### Using the provided Tokenizers
-
-We provide some pre-build tokenizers to cover the most common cases. You can easily load one of
-these using some `vocab.json` and `merges.txt` files:
-
-```python
-from tokenizers import CharBPETokenizer
-
-# Initialize a tokenizer
-vocab = "./path/to/vocab.json"
-merges = "./path/to/merges.txt"
-tokenizer = CharBPETokenizer(vocab, merges)
-
-# And then encode:
-encoded = tokenizer.encode("I can feel the magic, can you?")
-print(encoded.ids)
-print(encoded.tokens)
-```
-
-And you can train them just as simply:
-
-```python
-from tokenizers import CharBPETokenizer
-
-# Initialize a tokenizer
-tokenizer = CharBPETokenizer()
-
-# Then train it!
-tokenizer.train([ "./path/to/files/1.txt", "./path/to/files/2.txt" ])
-
-# Now, let's use it:
-encoded = tokenizer.encode("I can feel the magic, can you?")
-
-# And finally save it somewhere
-tokenizer.save("./path/to/directory/my-bpe.tokenizer.json")
-```
-
-#### Provided Tokenizers
-
- - `CharBPETokenizer`: The original BPE
- - `ByteLevelBPETokenizer`: The byte level version of the BPE
- - `SentencePieceBPETokenizer`: A BPE implementation compatible with the one used by SentencePiece
- - `BertWordPieceTokenizer`: The famous Bert tokenizer, using WordPiece
-
-All of these can be used and trained as explained above!
-
-### Build your own
 
 Whenever these provided tokenizers don't give you enough freedom, you can build your own tokenizer,
 by putting all the different parts you need together.

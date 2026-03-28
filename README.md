@@ -1,100 +1,100 @@
-<p align="center">
-    <br>
-    <img src="https://huggingface.co/landing/assets/tokenizers/tokenizers-logo.png" width="600"/>
-    <br>
-<p>
-<p align="center">
-    <img alt="Build" src="https://github.com/huggingface/tokenizers/workflows/Rust/badge.svg">
-    <a href="https://github.com/huggingface/tokenizers/blob/main/LICENSE">
-        <img alt="GitHub" src="https://img.shields.io/github/license/huggingface/tokenizers.svg?color=blue&cachedrop">
-    </a>
-    <a href="https://pepy.tech/project/tokenizers">
-        <img src="https://pepy.tech/badge/tokenizers/week" />
-    </a>
-</p>
+# Streamable Tokenizers
 
-Provides an implementation of today's most used tokenizers, with a focus on performance and
-versatility.
+**Incremental, streaming tokenization for large-scale and low-latency LLM pipelines.**
 
-## Fork notice
+This repository is an **independently maintained fork of Hugging Face `tokenizers`**, focused on **streaming support** and practical **Python / Node.js bindings** for modern inference workflows.
 
-This repository is a fork of `huggingface/tokenizers` used to develop and validate
-streaming tokenization features (especially Python and Node bindings).
+---
 
-- Upstream project: https://github.com/huggingface/tokenizers
-- This fork: streaming-focused work and experiments before upstreaming
+## Key Features
 
-## Main features:
+* **Streaming encode flows** — feed text incrementally via `process_chunk`, `finalize`, and `drain_tokens`
+* **Low-memory processing** — handle large files or live streams without loading full input
+* **Cross-platform bindings** — Python and Node.js interfaces for easy integration
+* **Active Rust core** — efficient, safe, and production-ready tokenizer implementation
 
- - Train new vocabularies and tokenize, using today's most used tokenizers.
- - Extremely fast (both training and tokenization), thanks to the Rust implementation. Takes
-   less than 20 seconds to tokenize a GB of text on a server's CPU.
- - Easy to use, but also extremely versatile.
- - Designed for research and production.
- - Normalization comes with alignments tracking. It's always possible to get the part of the
-   original sentence that corresponds to a given token.
- - Does all the pre-processing: Truncate, Pad, add the special tokens your model needs.
+---
 
-## Performances
-Performances can vary depending on hardware, but running the [~/bindings/python/benches/test_tiktoken.py](bindings/python/benches/test_tiktoken.py) should give the following on a g6 aws instance:
-![image](https://github.com/user-attachments/assets/2b913d4b-e488-4cbc-b542-f90a6c40643d)
+## Current State
 
+* **Rust core library** — fully implemented and actively maintained
+* **Python streaming binding** — implemented and tested
+* **Node.js streaming binding** — implemented and tested
+* Fully compatible with common subword models (BPE / Unigram)
 
-## Bindings
+---
 
-We provide bindings to the following languages (more to come!):
-  - [Rust](https://github.com/huggingface/tokenizers/tree/main/tokenizers) (Original implementation)
-  - [Python](https://github.com/huggingface/tokenizers/tree/main/bindings/python)
-  - [Node.js](https://github.com/huggingface/tokenizers/tree/main/bindings/node)
-  - [Ruby](https://github.com/ankane/tokenizers-ruby) (Contributed by @ankane, external repo)
+## Repository Layout
 
-## Installation
-
-You can install from source using:
-```bash
-pip install git+https://github.com/huggingface/tokenizers.git#subdirectory=bindings/python
+```
+tokenizers/          # Rust core library
+bindings/python/     # Python bindings
+bindings/node/       # Node.js bindings
+docs/                # Documentation for streaming features
 ```
 
-or install the released versions with
+---
+
+## Quick Start
+
+### Python (from source)
 
 ```bash
-pip install tokenizers
+cd bindings/python
+python -m venv .env
+source .env/bin/activate
+pip install -e .
 ```
- 
-## Quick example using Python:
 
-Choose your model between Byte-Pair Encoding, WordPiece or Unigram and instantiate a tokenizer:
+### Node.js (from source)
+
+```bash
+cd bindings/node
+npm install
+npm run build:debug
+npm test -- lib/bindings
+```
+
+---
+
+## Streaming Usage (Concept)
+
+Create a **streaming tokenizer** from a model, feed chunks incrementally, finalize, and drain tokens as they are emitted.
+
+**Python:**
 
 ```python
-from tokenizers import Tokenizer
-from tokenizers.models import BPE
+from streamable_tokenizers import StreamingTokenizer
 
-tokenizer = Tokenizer(BPE())
+tokenizer = StreamingTokenizer(model="bpe-en", buffer_size=4096)
+for chunk in chunks:
+    tokenizer.process_chunk(chunk)
+tokenizer.finalize()
+tokens = tokenizer.drain_tokens()
 ```
 
-You can customize how pre-tokenization (e.g., splitting into words) is done:
+**Node.js:**
 
-```python
-from tokenizers.pre_tokenizers import Whitespace
+```js
+const { StreamingTokenizer } = require('streamable-tokenizers');
 
-tokenizer.pre_tokenizer = Whitespace()
+const tokenizer = new StreamingTokenizer(model, { bufferSize: 4096 });
+tokenizer.processChunk(chunk);
+tokenizer.finalize();
+const tokens = tokenizer.drainTokens();
 ```
 
-Then training your tokenizer on a set of files just takes two lines of codes:
+---
 
-```python
-from tokenizers.trainers import BpeTrainer
+## Why This Fork
 
-trainer = BpeTrainer(special_tokens=["[UNK]", "[CLS]", "[SEP]", "[PAD]", "[MASK]"])
-tokenizer.train(files=["wiki.train.raw", "wiki.valid.raw", "wiki.test.raw"], trainer=trainer)
-```
+* Optimized for **streaming tokenization** in real-time or large-scale pipelines
+* Maintained **independently** of upstream roadmap
+* Enables **incremental decoding** for constrained logit heads and low-memory inference
 
-Once your tokenizer is trained, encode any text with just one line:
-```python
-output = tokenizer.encode("Hello, y'all! How are you 😁 ?")
-print(output.tokens)
-# ["Hello", ",", "y", "'", "all", "!", "How", "are", "you", "[UNK]", "?"]
-```
+---
 
-Check the [documentation](https://huggingface.co/docs/tokenizers/index)
-or the [quicktour](https://huggingface.co/docs/tokenizers/quicktour) to learn more!
+## Notes
+
+* This project intentionally avoids upstream branding beyond attribution.
+* Designed for **modular, high-performance LLM tooling**.

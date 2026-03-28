@@ -1,8 +1,10 @@
-## Fork context
+# Documentation — Streaming Fork
 
-This documentation is for a streaming-focused fork of
-`huggingface/tokenizers`. It includes notes and references for streaming
-tokenization work being developed in this fork.
+**This documentation covers the streaming-focused fork of Hugging Face `tokenizers`.**
+
+> This is an independently maintained fork of Hugging Face `tokenizers`, optimized for
+> streaming tokenization workflows. The documentation here includes guides and API references
+> for streaming features developed in this fork.
 
 ## Requirements
 
