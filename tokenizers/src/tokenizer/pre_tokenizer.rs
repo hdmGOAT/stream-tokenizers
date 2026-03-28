@@ -26,6 +26,12 @@ pub struct Split {
     tokens: Option<Vec<Token>>,
 }
 
+impl Split {
+    pub fn text(&self) -> &str {
+        self.normalized.get()
+    }
+}
+
 impl From<NormalizedString> for Split {
     fn from(n: NormalizedString) -> Self {
         Self {
