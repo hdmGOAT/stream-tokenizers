@@ -81,6 +81,7 @@ from .tokenizers import (
     NormalizedString,
     PreTokenizedString,
     Regex,
+    StreamingTokenizer,
     Token,
     Tokenizer,
     decoders,

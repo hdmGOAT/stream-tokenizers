@@ -25,6 +25,7 @@ mod models;
 mod normalizers;
 mod pre_tokenizers;
 mod processors;
+mod streaming;
 mod token;
 mod tokenizer;
 mod trainers;
@@ -76,6 +77,8 @@ pub mod tokenizers {
     pub use super::pre_tokenizers::pre_tokenizers;
     #[pymodule_export]
     pub use super::processors::processors;
+    #[pymodule_export]
+    pub use super::streaming::PyStreamingTokenizer;
     #[pymodule_export]
     pub use super::trainers::trainers;
 
