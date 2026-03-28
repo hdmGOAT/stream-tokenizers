@@ -9,6 +9,7 @@ pub mod models;
 pub mod normalizers;
 pub mod pre_tokenizers;
 pub mod processors;
+pub mod streaming;
 pub mod tasks;
 pub mod tokenizer;
 pub mod trainers;
