@@ -68,7 +68,7 @@ fn stream_tokenizer_processes_chunks_and_emits_tokens() {
     let streamer = MockStreamer::new();
     let mut tokenizer = StreamTokenizer::new(streamer, 1024);
 
-    tokenizer.process_chunk(b"hello").unwrap();
+    tokenizer.process_chunk(b"hello, ").unwrap();
     let token = tokenizer.next_token().unwrap();
     assert_eq!(token.id, 10);
     assert_eq!(token.value, "process");
@@ -93,4 +93,47 @@ fn stream_tokenizer_rejects_chunk_after_finalize() {
     tokenizer.finalize().unwrap();
     let error = tokenizer.process_chunk(b"late").unwrap_err();
     assert!(error.to_string().contains("finalize"));
+}
+
+#[derive(Clone, Default)]
+struct SplitCountStreamer {
+    received_split_counts: Arc<Mutex<Vec<usize>>>,
+}
+
+impl StreamingTokenizer for SplitCountStreamer {
+    fn streaming_config() -> StreamingConfig {
+        StreamingConfig {
+            requires_word_boundaries: true,
+            lookahead_bytes: 0,
+            can_emit_incrementally: true,
+            min_chunk_size: 1,
+        }
+    }
+
+    fn process_splits(
+        &mut self,
+        splits: Vec<Split>,
+        _is_final: bool,
+    ) -> tokenizers::Result<Vec<Token>> {
+        self.received_split_counts.lock().unwrap().push(splits.len());
+        Ok(vec![Token::new(splits.len() as u32, "count".to_string(), (0, 0))])
+    }
+
+    fn finalize(&mut self) -> tokenizers::Result<Vec<Token>> {
+        Ok(vec![])
+    }
+}
+
+#[test]
+fn stream_tokenizer_routes_chunk_through_pre_tokenizer_before_model() {
+    let streamer = SplitCountStreamer::default();
+    let mut tokenizer = StreamTokenizer::new(streamer, 1024);
+
+    tokenizer.process_chunk(b"hello, world!").unwrap();
+    let first = tokenizer.next_token().unwrap();
+    assert_eq!(first.id, 2);
+
+    tokenizer.finalize().unwrap();
+    let second = tokenizer.next_token().unwrap();
+    assert_eq!(second.id, 2);
 }
