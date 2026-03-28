@@ -144,6 +144,7 @@ pub mod models;
 pub mod normalizers;
 pub mod pre_tokenizers;
 pub mod processors;
+pub mod streaming;
 pub mod tokenizer;
 
 // Re-export from tokenizer
