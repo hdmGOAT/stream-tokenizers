@@ -64,7 +64,7 @@ Create a **streaming tokenizer** from a model, feed chunks incrementally, finali
 **Python:**
 
 ```python
-from streamable_tokenizers import StreamingTokenizer
+from tokenizers import StreamingTokenizer
 
 tokenizer = StreamingTokenizer(model="bpe-en", buffer_size=4096)
 for chunk in chunks:
@@ -76,7 +76,7 @@ tokens = tokenizer.drain_tokens()
 **Node.js:**
 
 ```js
-const { StreamingTokenizer } = require('streamable-tokenizers');
+const { StreamingTokenizer } = require('tokenizers');
 
 const tokenizer = new StreamingTokenizer(model, { bufferSize: 4096 });
 tokenizer.processChunk(chunk);
